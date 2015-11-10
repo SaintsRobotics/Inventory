@@ -2,7 +2,7 @@ class SQLWrapper:
     #I dunno what you'll need for your constructor
     def _init_(this, fill your stuff):
         pass
-    #Check the username and password, then generate the 
+    #Check the username and password, then generate the logintoken
     def login(this, username, password):
         return logintoken
     #Delete the Logintoken
@@ -29,3 +29,7 @@ class SQLWrapper:
     #Return all the history for a given item, going back num transactiosn (-1 for all)
     def getHistoryByIten(this, itemId, num):
         return history
+
+class InvalidLoginException(Exceptino):
+    #yeaaaaah
+    pass
