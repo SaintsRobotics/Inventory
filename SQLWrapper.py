@@ -66,7 +66,7 @@ class DummySQLWrapper:
         return {"ayyyy" : name}
     #Return the info of an object with this ID
     def getInfoById(this, objId):
-        return {"blazeit" : objId}
+        return {"nah" : objId}
     #Return all history, going back num transactions (-1 for all)
     def getHistory(this, num):
         return {"Black" : num}

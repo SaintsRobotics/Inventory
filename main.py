@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect
 import os
-from SQLWrapper import sql
+from SQLWrapper import SQ
 import DummySQLWrapper
 import json
 from flask.ext.api.exceptions import APIException, AuthenticationFailed, ParseError
