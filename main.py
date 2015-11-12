@@ -2,7 +2,6 @@ from flask import Flask, request, redirect
 import os
 from SQLWrapper import SQLWrapper, DummySQLWrapper
 import json
-from flask.ext.api.exceptions import APIException, AuthenticationFailed, ParseError
 
 app = Flask(__name__)
 sql = DummySQLWrapper()
@@ -14,11 +13,7 @@ def hello_monkey():
 def login():
     uname = request.args.get("username")
     password = request.args.get("password")
-    try:
-        return sql.login(uname, password)
-    except:
-        raise AuthenticationFailed()
-    return "what"
+    return sql.login(uname, password)
 @app.route("/logout", methods=['POST'])
 def logout():
     sql.logout(request.args.get("token"))
@@ -41,30 +36,30 @@ def getHistory():
     if num is None:
         num = -1
     return json.dumps(sql.getHistory(num))
-@app.route("history/obj/<name>", methods=["GET", "POST"])
+@app.route("/history/obj/<name>", methods=["GET", "POST"])
 def itemHistory(name):
     num = request.args.get("number")
     if num is None:
         num = -1
     return json.dumps(sql.getHistoryByIteM(name,num))
-@app.route("history/user/<name>", methods=["GET", "POST"])
+@app.route("/history/user/<name>", methods=["GET", "POST"])
 def userHistory(name): 
     num = request.args.get("number")
     if num is None:
         num = -1
     return json.dumps(sql.getHistoryByUser(name,num))
-@app.route("history/location/<name>", methods=["GET", "POST"])
+@app.route("/history/location/<name>", methods=["GET", "POST"])
 def locHistory(name):
     num = request.args.get("number")
     if num is None:
         num = -1
     return json.dumps(sql.getHistoryByCheckoutLocation(name,num))
-@app.route("user/list", methods=["POST"])
+@app.route("/user/list", methods=["POST"])
 def getUsers():
     if not sql.checkToken(request.args.get("token")):
         return "waaaat"
     return json.dumps(sql.allUsers())
-@app.route("user/info/<user>", methods=["POST"])
+@app.route("/user/info/<user>", methods=["POST"])
 def getUser(user):
     if not sql.checkToken(request.args.get("token")):
         return "waaaat"
