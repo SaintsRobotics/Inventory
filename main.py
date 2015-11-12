@@ -66,8 +66,7 @@ def getUser(user):
     return json.dumps(sql.userInfo(user))
 
 
-app.add_url_rule('/favicon.ico', if __name__ == "__main__":
-                 redirect_to=url_for('static', filename='favicon.ico'))    
-app.run("0.0.0.0",
+if __name__ == "main":
+	app.run("0.0.0.0",
             8080,
             debug=True)
