@@ -1,0 +1,57 @@
+CREATE TABLE IF NOT EXISTS users_tbl (
+	id INT NOT NULL AUTO_INCREMENT,
+	first_name VARCHAR(20) NOT NULL,
+	last_name VARCHAR(20) NOT NULL,
+	email VARCHAR(50) NOT NULL,
+	login_token VARCHAR(15) DEFAULT NULL,
+	PRIMARY KEY(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inventory_tbl (
+	id int NOT NULL AUTO_INCREMENT,
+	common_name varchar(100) NOT NULL,
+	current_user int NOT NULL DEFAULT 0,
+	current_location int NOT NULL DEFAULT 0,
+	percentage_left tinyint NOT NULL DEFAULT 0,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS checkout_log_tbl (
+	id int NOT NULL AUTO_INCREMENT,
+	object_id int NOT NULL,
+	user_id int NOT NULL,
+	time datetime NOT NULL,
+	PRIMARY KEY(id)
+) ENGINE=InnoDB;
+
+create table location_tbl (
+	id int NOT NULL AUTO_INCREMENT,
+	common_name varchar(100) NOT NULL,
+	PRIMARY KEY(id)
+) ENGINE=InnoDB;
+
+
+
+class BaseModel(Model):
+    class Meta:
+        database = db
+class User(BaseModel):
+    username = CharField(unique=True)
+    password = CharField()
+    first_name = CharField()
+    last_name = CharField()
+    email = CharField()
+    login_token = CharField(unique=True)
+class Location(BaseModel):
+    common_name = CharField()
+    description = TextField()
+class Item(BaseModel):
+    common_name = CharField()
+    current_user = ForeignKeyField(User, to_field="id", related_name="checkouts")
+    storage_location = ForeignKeyField(Location, to_field="id", related_name="contents")
+    percentage_left = IntegerField()
+class Transaction(BaseModel):
+    item = ForeignKeyField(Item, to_field="id", related_name="transactions")
+    user = ForeignKeyField(User, to_field="id", related_name="transactions")
+    time = DateTimeField(default=datetime.datetime.now)
+    percent_left = IntegerField()

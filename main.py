@@ -1,10 +1,10 @@
 from flask import Flask, request, redirect
 import os
-from SQLWrapper import SQLWrapper, DummySQLWrapper, InvalidIdException, InvalidLoginException
+from SQLWrapper import SQLWrapper, InvalidIdException, InvalidLoginException
 import json
 
 app = Flask(__name__)
-sql = DummySQLWrapper()
+sql = SQLWrapper()
  
 @app.route("/test", methods=['GET', 'POST'])
 def hello_monkey():
@@ -12,10 +12,12 @@ def hello_monkey():
 @app.route("/brew/coffee", methods=['GET', 'POST'])
 def teapot():
     return "I'm a bloody teapot", 418
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=['POST'])
 def login():
     uname = request.args.get("username")
     password = request.args.get("password")
+    if not isinstance(uname, str) or not isinstance(uname, str):
+        return "waaaaaaaaat", 401
     try:
         return sql.login(uname, password)
     except:
@@ -46,9 +48,11 @@ def searchByName(name):
 @app.route("/item/<name>", methods=["GET", "POST"])
 def search(name):
     try:
-        return json.dumps(sql.getInfoById(name))
+        return json.dumps(sql.getInfoById(int(name)))
     except InvalidIdException:
         return "Ain't nobody here but us chickens", 404
+    except ValueError:
+        return "That... is not a number.", 400
 @app.route("/history", methods=["GET", "POST"])
 def getHistory():
     num = request.args.get("number")
@@ -97,10 +101,19 @@ def getUser(user):
         return "you wot mm8", 400
     if not sql.checkToken(token):
         return "you can't do that!", 401
-    return json.dumps(sql.userInfo(user))
+    try:
+        return json.dumps(sql.userInfo(int(user)))
+    except ValueError:
+        return "you wot mm8", 400
+    
+@app.route("/user/search/<user>", methods=["POST"])
+def searchUser(user):
+    token = request.args.get("token")
+    if not isinstance(token, str):
+        return "you wot mm8", 400
+    if not sql.checkToken(token):
+        return "you can't do that!", 401
+    return json.dumps(sql.searchUsers(user))
 
-
-if __name__ == "main":
-	app.run("0.0.0.0",
-            8080,
-            debug=True)
+#if __name__ == "main":
+app.run(host=os.getenv("IP", "0.0.0.0"),port=int(os.getenv("PORT", 8080)), debug=True)
